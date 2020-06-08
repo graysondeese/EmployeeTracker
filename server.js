@@ -25,6 +25,7 @@ connection.connect(function(err) {
 });
 
 const start = () => {
+  roles = showRoles();
 // inquirer prompt to find out user info
 inquirer.prompt([
     {
@@ -37,6 +38,42 @@ inquirer.prompt([
   // capturing all of the responses and directing user to correct function
   if(res.choice === 'Exit') {
     connection.end();
+  } else if (res.choice === 'Add Employee') {
+    addEmployee();
+  } else if (res.choice === 'View Employees') {
+    viewEmployees();
+  } else if (res.choice === 'Update Employee Role') {
+    updateEmployees();
   }
 })
+}
+
+// array for roles
+const showRoles = () => {
+  let roleArr = new Array();
+  connection.query('Select title FROM role', (err, results) =>{
+    if(err) throw err;
+    for (let i = 0; i < results.length; i++) {
+      roleArr.push(results[i].title);
+    }
+  })
+  return roleArr;
+}
+
+let roles = showRoles();
+
+// function for adding an employee
+function addEmployee () {
+  inquirer.prompt([
+    {
+      type: 'input',
+      message: 'Employee first name?',
+      name: 'firstName'
+    }, 
+    {
+      type: 'input',
+      message: 'Employee last name?',
+      name: 'lastName'
+    }
+  ])
 }
