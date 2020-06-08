@@ -28,9 +28,15 @@ const start = () => {
 // inquirer prompt to find out user info
 inquirer.prompt([
     {
-        type: "input",
+        type: "list",
         message: "What would you like to do?",
-        choices: ['Add Employee', 'View Employees', 'Update Employee Role',  'Add Role', 'View Roles', 'Add Department', 'View Departments', 'Exit']
+        choices: ['Add Employee', 'View Employees', 'Update Employee Role',  'Add Role', 'View Roles', 'Add Department', 'View Departments', 'Exit'],
+        name: "choice"
     }
-]).then()
+]).then((res) => {
+  // capturing all of the responses and directing user to correct function
+  if(res.choice === 'Exit') {
+    connection.end();
+  }
+})
 }
