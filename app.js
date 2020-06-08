@@ -25,5 +25,12 @@ connection.connect(function(err) {
 });
 
 const start = () => {
-
+// inquirer prompt to find out user info
+inquirer.prompt([
+    {
+        type: "input",
+        message: "What would you like to do?",
+        choices: ['Add Employee', 'View Employees', 'Update Employee Role',  'Add Role', 'View Roles', 'Add Department', 'View Departments', 'Exit']
+    }
+]).then()
 }
