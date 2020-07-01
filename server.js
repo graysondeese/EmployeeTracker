@@ -54,7 +54,10 @@ const start = () => {
       } else if (res.choice === "View Employees") {
         viewEmployees('employee.id');
       } else if (res.choice === "Update Employee Role") {
-        updateEmployees();
+        updateEmployees('role');
+      } else if (res.choice === "Add Role") {
+        console.log('test');
+        
       }
     });
 };
@@ -127,5 +130,46 @@ connection.query(`SELECT employee.id, employee.first_name, employee.last_name, r
   console.table(results);
   start();
   }
+})
+}
+
+// Update employees
+const updateEmployees = (query) => {
+  //Grab database entries
+  connection.query('SELECT * FROM employee', (err, result) => {
+    if(err) throw err;
+    //Find out which employee they want to edit, similar to the remove function
+    inquirer.prompt([{
+        type: 'list',
+        message: 'Which employee do you want to update?',
+        name: 'choice',
+        choices: () => {
+            let choiceArr = [];
+            for(let i = 0; i < result.length; i++) {
+                choiceArr.push(`${result[i].id}) ${result[i].first_name} ${result[i].last_name}`);
+            }
+            return choiceArr;
+        }
+    }]).then((response) => {
+        let choiceId = parseInt(response.choice.split(" ")[0]);
+        //If they wanted to switch the role
+        if(query === 'role') {
+            inquirer.prompt([{
+                type: 'list',
+                message: 'What role should this person be updated to?',
+                choices: roles,
+                name: 'role'
+            }]).then((response) => {
+                //Grab id like the remove function
+                let roleId = roles.indexOf(response.role) + 1;
+                //Update the employee entry
+                connection.query('UPDATE employee SET role_id=? WHERE id=?', [roleId, choiceId], (err) => {
+                    if (err) throw err;
+                })
+                //Launch main menu
+                start();
+            })
+        }
+    })
 })
 }
