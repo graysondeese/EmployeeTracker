@@ -59,6 +59,10 @@ const start = () => {
         addRole();
       } else if (res.choice === "View Roles") {
         viewRoles();
+      } else if (res.choice === "Add Department") {
+        addDepartment();
+      } else if (res.choice === "View Departments") {
+        viewDepartments();
       }
     });
 };
@@ -181,15 +185,15 @@ const addRole = () => {
       if(err) throw err;
       inquirer.prompt([{
           type: 'input',
-          message: 'Role title:',
+          message: 'Role title?',
           name: 'title'
       },{
           type: 'input',
-          message: 'Salary:',
+          message: 'Salary?',
           name: 'salary'
       },{
           type: 'list',
-          message: 'Department',
+          message: 'Department?',
           name: 'department',
           choices: () => {
               let deptChoices = [];
@@ -215,6 +219,32 @@ const addRole = () => {
 // Views all roles
 const viewRoles = () => {
   connection.query('SELECT * FROM role', (err, result) => {
+      if(err) throw err;
+      console.table(result);
+      start();
+  })
+}
+
+// Adding department
+const addDepartment = () => {
+  inquirer.prompt([{
+      type: 'input',
+      message: 'Deparment Name?',
+      name: 'name'
+  }]).then((response) => {
+      let holder = {
+          name: response.name
+      }
+      connection.query(`INSERT INTO department SET ?`, holder, (err) => {
+          if(err) throw err;
+          start();
+      })
+  })
+}
+
+// Viewing departments
+const viewDepartments = () => {
+  connection.query('SELECT * FROM department', (err, result) => {
       if(err) throw err;
       console.table(result);
       start();
