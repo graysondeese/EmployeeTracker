@@ -52,7 +52,7 @@ const start = () => {
       } else if (res.choice === "Add Employee") {
         addEmployee();
       } else if (res.choice === "View Employees") {
-        viewEmployees();
+        viewEmployees('employee.id');
       } else if (res.choice === "Update Employee Role") {
         updateEmployees();
       }
@@ -83,7 +83,7 @@ function addEmployee() {
         name: "firstName",
       },
       {
-        type: "input",
+        type: "input",      
         message: "Employee last name?",
         name: "lastName",
       },
@@ -109,6 +109,23 @@ function addEmployee() {
           if (error) throw err;
         }
       );
+      console.log('Employee Added!');
       start();
     });
+}
+
+// function for viewing employees
+
+const viewEmployees = (query) => {
+  // Joining all three tables
+connection.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name FROM employee LEFT JOIN role ON employee.role_id=role.id LEFT JOIN department ON role.department_id = department.id ORDER BY ${query}`, (err, results) => {
+  if(err) throw err;
+  if(results.length ===0) {
+    console.log('Nothing to display');
+    start();
+  } else {
+  console.table(results);
+  start();
+  }
+})
 }
