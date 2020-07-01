@@ -56,8 +56,9 @@ const start = () => {
       } else if (res.choice === "Update Employee Role") {
         updateEmployees('role');
       } else if (res.choice === "Add Role") {
-        console.log('test');
-        
+        addRole();
+      } else if (res.choice === "View Roles") {
+        viewRoles();
       }
     });
 };
@@ -172,4 +173,50 @@ const updateEmployees = (query) => {
         }
     })
 })
+}
+
+// Add Role
+const addRole = () => {
+  connection.query('SELECT * FROM department', (err, result) => {
+      if(err) throw err;
+      inquirer.prompt([{
+          type: 'input',
+          message: 'Role title:',
+          name: 'title'
+      },{
+          type: 'input',
+          message: 'Salary:',
+          name: 'salary'
+      },{
+          type: 'list',
+          message: 'Department',
+          name: 'department',
+          choices: () => {
+              let deptChoices = [];
+              for(let i = 0; i < result.length; i++) {
+                  deptChoices.push(`${result[i].id}) ${result[i].name}`);
+              }
+              return deptChoices;
+          }
+      }]).then((response) => {
+          let depChoiceId = parseInt(response.department.split(' ')[0]);
+          connection.query('INSERT INTO role SET ?', {
+              title: response.title,
+              salary: response.salary,
+              department_id: depChoiceId
+          }, (err) => {
+              if(err) throw err;
+              roles = showRoles();
+          })
+          start();
+      })
+  })
+}
+// Views all roles
+const viewRoles = () => {
+  connection.query('SELECT * FROM role', (err, result) => {
+      if(err) throw err;
+      console.table(result);
+      start();
+  })
 }
